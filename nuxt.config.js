@@ -1,5 +1,6 @@
 module.exports = {
   router: {
+    linkActiveClass: 'active',
     extendRoutes(routes, resolve) {
       // 清除路由
       routes.splice(0)
