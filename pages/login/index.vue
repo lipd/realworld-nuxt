@@ -15,33 +15,59 @@
             <li>That email is already taken</li>
           </ul>
 
-          <form>
+          <form @submit.prevent="onSubmit">
             <fieldset v-if="!isLogin" class="form-group">
               <input class="form-control form-control-lg" type="text" placeholder="Your Name">
             </fieldset>
             <fieldset class="form-group">
-              <input class="form-control form-control-lg" type="text" placeholder="Email">
+              <input v-model="user.email" class="form-control form-control-lg" type="text" placeholder="Email">
             </fieldset>
             <fieldset class="form-group">
-              <input class="form-control form-control-lg" type="password" placeholder="Password">
+              <input v-model="user.password" class="form-control form-control-lg" type="password" placeholder="Password">
             </fieldset>
             <button class="btn btn-lg btn-primary pull-xs-right">
               {{ isLogin ? "Sign in" : "Sign up" }}
             </button>
           </form>
         </div>
-
-      </div>
+</div>
     </div>
   </div>
 </template>
 
 <script>
+import request from '@/utils/request'
+
 export default {
   name: 'LoginIndex',
   computed: {
     isLogin () {
       return this.$route.name === 'login'
+    }
+  },
+  data() {
+    return {
+      user: {
+        email: '',
+        password: '',
+      }
+    }
+  },
+  methods: {
+    async onSubmit () {
+      const { data } = await request({
+        method: 'POST',
+        url: '/api/users/login',
+        data: {
+          user: this.user
+        }
+      })
+
+      console.log(data)
+
+      // TODO: 保存登录状态
+
+      this.$router.push('/')
     }
   }
 }
