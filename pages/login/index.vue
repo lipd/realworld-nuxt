@@ -87,6 +87,7 @@ export default {
         console.log(data)
 
         // TODO: 保存登录状态
+        this.$store.commit('setUser', data.user)
 
         this.$router.push('/')
       } catch (e) {
