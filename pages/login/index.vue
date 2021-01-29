@@ -30,13 +30,13 @@
             </button>
           </form>
         </div>
-</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import request from '@/utils/request'
+import { login } from '@/api/user'
 
 export default {
   name: 'LoginIndex',
@@ -55,12 +55,8 @@ export default {
   },
   methods: {
     async onSubmit () {
-      const { data } = await request({
-        method: 'POST',
-        url: '/api/users/login',
-        data: {
-          user: this.user
-        }
+      const { data } = await login({
+        user: this.user
       })
 
       console.log(data)
