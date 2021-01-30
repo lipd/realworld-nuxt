@@ -1,3 +1,5 @@
+const cookieparser = process.server ? require('cookieparser') : undefined
+
 // 由于在服务端渲染期间运行的是同一个实例
 // 所以需要把 state 定义为一个函数，防止数据冲突
 export const state = () => {
@@ -7,10 +9,24 @@ export const state = () => {
   }
 }
 
-export const mutation = {
+export const mutations = {
   setUser(state, data) {
     state.user = data
   },
 }
 
-export const action = {}
+export const actions = {
+  // nuxtServerInit 会在服务器渲染过程中自动调用
+  // 作用是初始化容器数据，传递数据给客户端
+  nuxtServerInit({ commit }, { req }) {
+    let auth = null
+    if (req.headers.cookie) {
+      const parsed = cookieparser.parse(req.headers.cookie)
+      try {
+        auth = JSON.parse(parsed.auth)
+      } catch (err) {}
+    }
+
+    commit('setUser', auth)
+  },
+}

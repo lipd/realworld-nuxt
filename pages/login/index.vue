@@ -58,6 +58,7 @@
 
 <script>
 import { login, register } from '@/api/user'
+const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
   name: 'LoginIndex',
@@ -88,6 +89,9 @@ export default {
 
         // TODO: 保存登录状态
         this.$store.commit('setUser', data.user)
+
+        // 数据持久化
+        Cookie.set('user', data.user)
 
         this.$router.push('/')
       } catch (e) {
