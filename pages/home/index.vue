@@ -90,6 +90,7 @@
                   name: 'home',
                   query: {
                     page: item,
+                    tag: $route.query.tag,
                   },
                 }"
                 >{{ item }}</nuxt-link
@@ -103,9 +104,19 @@
           <div class="sidebar">
             <p>Popular Tags</p>
             <div class="tag-list">
-              <a v-for="item in tags" :key="item" class="tag-pill tag-default">
+              <nuxt-link
+                :to="{
+                  name: 'home',
+                  query: {
+                    tag: item,
+                  },
+                }"
+                v-for="item in tags"
+                :key="item"
+                class="tag-pill tag-default"
+              >
                 {{ item }}
-              </a>
+              </nuxt-link>
             </div>
           </div>
         </div>
@@ -127,6 +138,7 @@ export default {
       getArticles({
         limit,
         offset: (page - 1) * limit,
+        tag: query.tag,
       }),
       getTags(),
     ])
@@ -146,7 +158,7 @@ export default {
       return Math.ceil(this.articlesCount / this.limit)
     },
   },
-  watchQuery: ['page'],
+  watchQuery: ['page', 'tag'],
 }
 </script>
 
