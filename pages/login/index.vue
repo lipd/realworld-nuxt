@@ -85,8 +85,6 @@ export default {
           user: this.user,
         })
 
-        console.log(data)
-
         // TODO: 保存登录状态
         this.$store.commit('setUser', data.user)
 
