@@ -123,17 +123,22 @@ export default {
   async asyncData({ query }) {
     const limit = 20
     const page = Number.parseInt(query.page || 1)
-    const { data } = await getArticles({
-      limit,
-      offset: (page - 1) * limit,
-    })
-    const { data: tagData } = await getTags()
+    const [articleRes, tagRes] = await Promise.all([
+      getArticles({
+        limit,
+        offset: (page - 1) * limit,
+      }),
+      getTags(),
+    ])
+
+    const { articles, articlesCount } = articleRes.data
+    const { tags } = tagRes.data
     return {
-      articles: data.articles,
-      articlesCount: data.articlesCount,
+      articles: articles,
+      articlesCount: articlesCount,
       page,
       limit,
-      tags: tagData.tags,
+      tags,
     }
   },
   computed: {
