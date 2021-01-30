@@ -12,11 +12,14 @@
         <div class="col-md-9">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
-              <li class="nav-item">
+              <li v-if="user" class="nav-item">
                 <a class="nav-link disabled" href="">Your Feed</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="">Global Feed</a>
+              </li>
+              <li v-if="tag" class="nav-item">
+                <a class="nav-link active" href="">#{{ tag }}</a>
               </li>
             </ul>
           </div>
@@ -128,11 +131,13 @@
 <script>
 import { getArticles } from '@/api/article'
 import { getTags } from '@/api/tag'
+import { mapState } from 'vuex'
 
 export default {
   name: 'HomeIndex',
   async asyncData({ query }) {
     const limit = 20
+    const { tag } = query
     const page = Number.parseInt(query.page || 1)
     const [articleRes, tagRes] = await Promise.all([
       getArticles({
@@ -151,9 +156,11 @@ export default {
       page,
       limit,
       tags,
+      tag,
     }
   },
   computed: {
+    ...mapState(['user']),
     totalPages() {
       return Math.ceil(this.articlesCount / this.limit)
     },
