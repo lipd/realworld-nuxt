@@ -20,7 +20,6 @@ export const actions = {
   // 作用是初始化容器数据，传递数据给客户端
   nuxtServerInit({ commit }, { req }) {
     let user = null
-    console.log(req.headers.cookie)
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie)
       try {
