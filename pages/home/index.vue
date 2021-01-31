@@ -9,17 +9,60 @@
 
     <div class="container page">
       <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-8">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
               <li v-if="user" class="nav-item">
-                <a class="nav-link disabled" href="">Your Feed</a>
+                <nuxt-link
+                  exact
+                  class="nav-link"
+                  :class="{
+                    active: tab === 'your_feed',
+                  }"
+                  :to="{
+                    name: 'home',
+                    query: {
+                      tab: 'your_feed',
+                    },
+                  }"
+                >
+                  Your Feed
+                </nuxt-link>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="">Global Feed</a>
+                <nuxt-link
+                  exact
+                  class="nav-link"
+                  :class="{
+                    active: tab === 'global_feed',
+                  }"
+                  :to="{
+                    name: 'home',
+                    query: {
+                      tab: 'global_feed',
+                    },
+                  }"
+                >
+                  Global Feed
+                </nuxt-link>
               </li>
               <li v-if="tag" class="nav-item">
-                <a class="nav-link active" href="">#{{ tag }}</a>
+                <nuxt-link
+                  exact
+                  class="nav-link"
+                  :class="{
+                    active: tab === 'tag',
+                  }"
+                  :to="{
+                    name: 'home',
+                    query: {
+                      tab: 'tag',
+                      tag: tag,
+                    },
+                  }"
+                >
+                  #{{ tag }}
+                </nuxt-link>
               </li>
             </ul>
           </div>
@@ -111,6 +154,7 @@
                 :to="{
                   name: 'home',
                   query: {
+                    tab: 'tag',
                     tag: item,
                   },
                 }"
@@ -157,6 +201,7 @@ export default {
       limit,
       tags,
       tag,
+      tab: query.tab || 'global_feed',
     }
   },
   computed: {
@@ -165,7 +210,7 @@ export default {
       return Math.ceil(this.articlesCount / this.limit)
     },
   },
-  watchQuery: ['page', 'tag'],
+  watchQuery: ['page', 'tag', 'tab'],
 }
 </script>
 
