@@ -12,6 +12,8 @@
     "nuxt": "^2.14.12"
   },
   "scripts": {
-    "dev": "nuxt"
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start"
   }
 }
