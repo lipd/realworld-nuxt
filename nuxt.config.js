@@ -53,4 +53,10 @@ module.exports = {
     },
   },
   plugins: ['~/plugins/request.js', '~/plugins/time.js'],
+  server: {
+    // 对外提供访问
+    host: '0.0.0.0',
+    // 默认是 3000
+    port: 80,
+  },
 }
