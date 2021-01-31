@@ -25,9 +25,7 @@
 
     <div class="container page">
       <div class="row article-content">
-        <div class="col-md-12">
-          {{ article.body }}
-        </div>
+        <div class="col-md-12" v-html="article.body"></div>
       </div>
 
       <hr />
@@ -124,11 +122,16 @@
 
 <script>
 import { getArticle } from '@/api/article'
+import MarkdownIt from 'markdown-it'
+
+const md = new MarkdownIt()
 
 export default {
   name: 'ArticleIndex',
   async asyncData({ params }) {
     const { data } = await getArticle(params.slug)
+    const { article } = data
+    article.body = md.render(article.body)
     return {
       article: data.article,
     }
