@@ -135,6 +135,7 @@
                 :to="{
                   name: 'home',
                   query: {
+                    tab: tab,
                     page: item,
                     tag: $route.query.tag,
                   },
@@ -173,18 +174,22 @@
 </template>
 
 <script>
-import { getArticles } from '@/api/article'
+import { getArticles, getFeedArticles } from '@/api/article'
 import { getTags } from '@/api/tag'
 import { mapState } from 'vuex'
 
 export default {
   name: 'HomeIndex',
-  async asyncData({ query }) {
+  async asyncData({ query, store }) {
     const limit = 20
     const { tag } = query
+    const tab = query.tab || 'global_feed'
+    const loadArticles =
+      store.state.user && tab === 'your_feed' ? getFeedArticles : getArticles
+
     const page = Number.parseInt(query.page || 1)
     const [articleRes, tagRes] = await Promise.all([
-      getArticles({
+      loadArticles({
         limit,
         offset: (page - 1) * limit,
         tag: query.tag,
