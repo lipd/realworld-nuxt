@@ -86,7 +86,6 @@ export default {
           user: this.user,
         })
 
-        // TODO: 保存登录状态
         this.$store.commit('setUser', data.user)
 
         // 数据持久化
