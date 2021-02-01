@@ -40,6 +40,14 @@ export const getArticle = slug => {
   })
 }
 
+export const createArticle = data => {
+  return request({
+    method: 'POST',
+    url: `api/articles`,
+    data,
+  })
+}
+
 export const getComments = slug => {
   return request({
     method: 'GET',
