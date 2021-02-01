@@ -39,55 +39,78 @@
           <div class="articles-toggle">
             <ul class="nav nav-pills outline-active">
               <li class="nav-item">
-                <a class="nav-link active" href="">My Articles</a>
+                <nuxt-link
+                  exact
+                  class="nav-link"
+                  :to="{
+                    name: 'profile',
+                    params: {
+                      username: user.username,
+                    },
+                  }"
+                  >My Articles</nuxt-link
+                >
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="">Favorited Articles</a>
+                <nuxt-link
+                  exact=""
+                  class="nav-link"
+                  :to="{
+                    name: 'profile',
+                    query: {
+                      favorites: true,
+                    },
+                  }"
+                  >Favorited Articles</nuxt-link
+                >
               </li>
             </ul>
           </div>
 
-          <div class="article-preview">
+          <div
+            v-for="article in articles"
+            class="article-preview"
+            :key="article.slug"
+          >
             <div class="article-meta">
-              <a href=""><img src="http://i.imgur.com/Qr71crq.jpg"/></a>
+              <nuxt-link
+                :to="{
+                  name: 'profile',
+                  params: {
+                    username: article.author.username,
+                  },
+                }"
+                ><img :src="article.author.image"
+              /></nuxt-link>
               <div class="info">
-                <a href="" class="author">Eric Simons</a>
-                <span class="date">January 20th</span>
+                <a href="" class="author">{{ article.author.username }}</a>
+                <span class="date">{{
+                  article.createdAt | date('MMM DD, YYYY')
+                }}</span>
               </div>
               <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                <i class="ion-heart"></i> 29
+                <i class="ion-heart"></i> {{ article.favoritesCount }}
               </button>
             </div>
-            <a href="" class="preview-link">
-              <h1>How to build webapps that scale</h1>
-              <p>This is the description for the post.</p>
-              <span>Read more...</span>
-            </a>
-          </div>
-
-          <div class="article-preview">
-            <div class="article-meta">
-              <a href=""><img src="http://i.imgur.com/N4VcUeJ.jpg"/></a>
-              <div class="info">
-                <a href="" class="author">Albert Pai</a>
-                <span class="date">January 20th</span>
-              </div>
-              <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                <i class="ion-heart"></i> 32
-              </button>
-            </div>
-            <a href="" class="preview-link">
+            <nuxt-link
+              :to="{
+                name: 'article',
+                params: {
+                  slug: article.slug,
+                },
+              }"
+              class="preview-link"
+            >
               <h1>
-                The song you won't ever stop singing. No matter how hard you
-                try.
+                {{ article.title }}
               </h1>
-              <p>This is the description for the post.</p>
+              <p>{{ article.description }}</p>
               <span>Read more...</span>
               <ul class="tag-list">
                 <li class="tag-default tag-pill tag-outline">Music</li>
                 <li class="tag-default tag-pill tag-outline">Song</li>
               </ul>
-            </a>
+            </nuxt-link>
           </div>
         </div>
       </div>
@@ -98,6 +121,7 @@
 <script>
 import { mapState } from 'vuex'
 import { profile, follow, unfollow } from '@/api/user'
+import { getArticles } from '@/api/article'
 
 export default {
   middleware: 'authenticated',
@@ -132,10 +156,22 @@ export default {
       }
       this.followDisable = false
     },
+    async fetArticles() {
+      this.me = this.profile.username === this.user.username
+      this.following = this.profile.following
+
+      const isFavorites = this.$route.query.favorites
+      const name = this.profile.username
+      const params = isFavorites ? { favorited: name } : { author: name }
+      const { data } = await getArticles(params)
+      this.articles = data.articles
+    },
   },
-  mounted() {
-    this.me = this.profile.username === this.user.username
-    this.following = this.profile.following
+  async mounted() {
+    this.fetArticles()
+  },
+  watchQuery() {
+    this.fetArticles()
   },
 }
 </script>
