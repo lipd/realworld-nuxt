@@ -23,3 +23,24 @@ export const update = data => {
     data,
   })
 }
+
+export const profile = username => {
+  return request({
+    method: 'GET',
+    url: `/api/profiles/${username}`,
+  })
+}
+
+export const follow = username => {
+  return request({
+    method: 'POST',
+    url: `/api/profiles/${username}/follow`,
+  })
+}
+
+export const unfollow = username => {
+  return request({
+    method: 'DELETE',
+    url: `/api/profiles/${username}/follow`,
+  })
+}

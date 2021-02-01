@@ -4,15 +4,29 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-            <h4>Eric Simons</h4>
+            <img :src="profile.image" class="user-img" />
+            <h4>{{ profile.username }}</h4>
             <p>
-              Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda
-              looks like Peeta from the Hunger Games
+              {{ profile.bio }}
             </p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
+            <nuxt-link
+              v-if="me"
+              :to="{
+                name: 'settings',
+              }"
+              class="btn btn-sm btn-outline-secondary action-btn"
+            >
+              <i class="ion-gear-a"></i> Edit Profile Settings
+            </nuxt-link>
+            <button
+              :disabled="followDisable"
+              @click="onFollow(following)"
+              v-else
+              class="btn btn-sm btn-outline-secondary action-btn"
+            >
               <i class="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons
+              &nbsp; {{ following ? 'Unfollow' : 'Follow' }}
+              {{ profile.username }}
             </button>
           </div>
         </div>
@@ -82,10 +96,46 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { profile, follow, unfollow } from '@/api/user'
+
 export default {
   middleware: 'authenticated',
   name: 'UserProfile',
+  data() {
+    return {
+      following: false,
+      followDisable: false,
+      me: false,
+      articles: [],
+    }
+  },
+  async asyncData({ params }) {
+    const { data } = await profile(params.username)
+    return {
+      profile: data.profile,
+    }
+  },
+  computed: {
+    ...mapState(['user']),
+  },
+  methods: {
+    async onFollow(following) {
+      const api = following ? unfollow : follow
+      this.followDisable = true
+      try {
+        const { data } = await api(this.profile.username)
+        const { profile } = data
+        this.following = profile.following
+      } catch (err) {
+        this.errors = err.response.data.errors
+      }
+      this.followDisable = false
+    },
+  },
+  mounted() {
+    this.me = this.profile.username === this.user.username
+    this.following = this.profile.following
+  },
 }
 </script>
-
-<style></style>
