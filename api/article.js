@@ -48,6 +48,13 @@ export const createArticle = data => {
   })
 }
 
+export const deleteArticle = slug => {
+  return request({
+    method: 'DELETE',
+    url: `api/articles/${slug}`,
+  })
+}
+
 export const getComments = slug => {
   return request({
     method: 'GET',

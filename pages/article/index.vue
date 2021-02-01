@@ -3,7 +3,7 @@
     <div class="banner">
       <div class="container">
         <h1>{{ article.title }}</h1>
-        <article-meta :article="article" />
+        <article-meta :article="article" :mine="mine" />
       </div>
     </div>
 
@@ -15,7 +15,7 @@
       <hr />
 
       <div class="article-actions">
-        <article-meta :article="article" />
+        <article-meta :article="article" :mine="mine" />
       </div>
 
       <div class="row">
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { getArticle } from '@/api/article'
 import MarkdownIt from 'markdown-it'
 import ArticleMeta from './components/article-meta.vue'
@@ -37,6 +38,14 @@ const md = new MarkdownIt()
 
 export default {
   components: { ArticleMeta, ArticleComments },
+  data() {
+    return {
+      mine: false,
+    }
+  },
+  computed: {
+    ...mapState(['user']),
+  },
   name: 'ArticleIndex',
   async asyncData({ params }) {
     const { data } = await getArticle(params.slug)
@@ -45,6 +54,10 @@ export default {
     return {
       article: data.article,
     }
+  },
+  mounted() {
+    if (!this.user) return
+    this.mine = this.user.username === this.article.author.username
   },
   head() {
     return {
