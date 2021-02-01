@@ -55,6 +55,14 @@ export const deleteArticle = slug => {
   })
 }
 
+export const updateArticle = ({ slug, data }) => {
+  return request({
+    method: 'PUT',
+    url: `api/articles/${slug}`,
+    data,
+  })
+}
+
 export const getComments = slug => {
   return request({
     method: 'GET',

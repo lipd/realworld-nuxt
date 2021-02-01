@@ -23,9 +23,17 @@
       <span class="date">{{ article.createdAt | date('MMM DD, YYYY') }}</span>
     </div>
     <template v-if="mine">
-      <a class="btn btn-outline-secondary btn-sm">
+      <nuxt-link
+        :to="{
+          name: 'editor',
+          query: {
+            slug: article.slug,
+          },
+        }"
+        class="btn btn-outline-secondary btn-sm"
+      >
         <i class="ion-edit"></i> Edit Article
-      </a>
+      </nuxt-link>
 
       <button @click="onDelete" class="btn btn-outline-danger btn-sm">
         <i class="ion-trash-a"></i> Delete Article

@@ -31,6 +31,7 @@
               </fieldset>
               <fieldset class="form-group">
                 <input
+                  v-if="!slug"
                   v-model="tagInput"
                   @keyup.enter="onInputTag"
                   type="text"
@@ -50,11 +51,20 @@
               </fieldset>
 
               <button
+                v-if="!slug"
                 @click.prevent="onSubmit"
                 class="btn btn-lg pull-xs-right btn-primary"
                 type="button"
               >
                 Publish Article
+              </button>
+              <button
+                v-else
+                @click.prevent="onUpdate"
+                class="btn btn-lg pull-xs-right btn-primary"
+                type="button"
+              >
+                Update Article
               </button>
             </fieldset>
           </form>
@@ -65,13 +75,15 @@
 </template>
 
 <script>
-import { createArticle } from '@/api/article'
+import { createArticle, getArticle, updateArticle } from '@/api/article'
 
 export default {
   middleware: 'authenticated',
   name: 'EditorIndex',
   data() {
     return {
+      slug: null,
+      submitDisalbe: false,
       tagInput: '',
       article: {
         title: '',
@@ -100,6 +112,33 @@ export default {
         this.errors = err.response.data.errors
       }
     },
+    async onUpdate() {
+      try {
+        const { title, description, body } = this.article
+        await updateArticle({
+          slug: this.slug,
+          data: {
+            title,
+            description,
+            body,
+          },
+        })
+        this.$router.push(`/article/${this.slug}`)
+      } catch (err) {
+        this.errors = err.response.data.errors
+      }
+    },
+  },
+  async mounted() {
+    const slug = this.$route.query.slug
+    if (slug) {
+      this.slug = slug
+      this.submitDisalbe = true
+      const { data } = await getArticle(slug)
+      const { title, description, body } = data.article
+      this.article = { title, description, body }
+      this.submitDisalbe = false
+    }
   },
 }
 </script>
